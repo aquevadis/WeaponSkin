@@ -49,6 +49,10 @@ internal class PlayerInfoManager : IPlayerInfoManager, IClientListener, IManager
     private readonly ushort?[,] _playerMedals    = new ushort?[PlayerSlot.MaxPlayerCount, TEAM_MAX_COUNT];
     private readonly ushort?[,] _playerMusicKits = new ushort?[PlayerSlot.MaxPlayerCount, TEAM_MAX_COUNT];
 
+    private readonly double[] _lastRefreshTime = new double[PlayerSlot.MaxPlayerCount];
+
+    private readonly IConVar ws_throttle_time;
+
     public PlayerInfoManager(InterfaceBridge bridge, ICommandManager commandManager, ILogger<PlayerInfoManager> logger)
     {
         _bridge   = bridge;
@@ -56,6 +60,10 @@ internal class PlayerInfoManager : IPlayerInfoManager, IClientListener, IManager
         _logger   = logger;
 
         _weaponCosmetics = Enumerable.Repeat<WeaponCosmetics[]>([], PlayerSlot.MaxPlayerCount).ToArray();
+
+        ws_throttle_time
+            = bridge.ConVarManager.CreateConVar("ws_throttle_time", 15.0f, "How long should the cooldown for refreshing be")
+              ?? throw new InvalidOperationException("Failed to create convar ws_throttle_time");
     }
 
     public bool Init()
@@ -69,6 +77,22 @@ internal class PlayerInfoManager : IPlayerInfoManager, IClientListener, IManager
 
     private void OnCommandRefresh(IGameClient client, StringCommand command)
     {
+        var slot = client.Slot;
+        var now  = _bridge.ModSharp.EngineTime();
+
+        var delta = now - _lastRefreshTime[slot];
+
+        var throttle = ws_throttle_time.GetFloat();
+
+        if (delta < throttle)
+        {
+            client.Print(HudPrintChannel.SayText2,
+                         $" [{ChatColor.Green}WS{ChatColor.White}] Please wait {delta:F1} seconds before refreshing again.");
+
+            return;
+        }
+
+        _lastRefreshTime[slot] = now;
         RefreshInventory(client);
     }
 

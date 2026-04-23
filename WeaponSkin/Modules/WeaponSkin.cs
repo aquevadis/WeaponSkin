@@ -174,12 +174,12 @@ internal partial class WeaponSkin : IModule
 
         if (skin.Keychain is { } keychain)
         {
-            var schema = GetKeychainSchema(0);
-            SetOrAddAttribute(view, schema.Id, BitConverter.Int32BitsToSingle(keychain.KeychainId));
-            SetOrAddAttribute(view, schema.Seed, keychain.Seed);
-            SetOrAddAttribute(view, schema.OffsetX, keychain.X);
-            SetOrAddAttribute(view, schema.OffsetY, keychain.Y);
-            SetOrAddAttribute(view, schema.OffsetZ, keychain.Z);
+            var keychainSchema = GetKeychainSchema(0);
+            SetOrAddAttribute(view, keychainSchema.Id, BitConverter.Int32BitsToSingle(keychain.KeychainId));
+            SetOrAddAttribute(view, keychainSchema.Seed, keychain.Seed);
+            SetOrAddAttribute(view, keychainSchema.OffsetX, keychain.X);
+            SetOrAddAttribute(view, keychainSchema.OffsetY, keychain.Y);
+            SetOrAddAttribute(view, keychainSchema.OffsetZ, keychain.Z);
         }
     }
 
