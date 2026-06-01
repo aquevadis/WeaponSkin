@@ -187,17 +187,21 @@ internal partial class WeaponSkin : IModule
     {
         var attackerSlot = @params.AttackerPlayerSlot;
 
-        if (_bridge.EntityManager.FindEntityByHandle(@params.AttackerPawnHandle) is not { } attackerPawn
-            || !attackerPawn.IsPlayer(true)
-            || attackerSlot < 0
+        if (attackerSlot < 0
             || _bridge.ClientManager.GetGameClient((PlayerSlot) attackerSlot) is not { } attackerClient)
+        {
+            return;
+        }
+
+        if (_bridge.EntityManager.FindEntityByHandle(@params.AttackerPawnHandle) is not { IsValidEntity: true } attackerPawn
+            || !attackerPawn.IsPlayer(true))
         {
             return;
         }
 
         var attackEntity = _bridge.EntityManager.FindEntityByHandle(@params.AbilityHandle);
 
-        if (attackEntity?.AsBaseWeapon() is not { } weapon)
+        if (attackEntity is not { IsValidEntity: true } || attackEntity.AsBaseWeapon() is not { } weapon)
         {
             return;
         }
