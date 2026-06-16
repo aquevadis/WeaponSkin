@@ -125,6 +125,8 @@ internal partial class WeaponSkin : IModule
             return;
         }
 
+        _logger.LogInformation("{colorMsg}", $"Client: {client.Name} has skin with paint id: {skin.PaintId} for weapon id: {skin.ItemId} | sticker count {skin.Stickers.Length} | keychain: {skin.Keychain}");
+        
         view.SetAccountIdLocal(client.SteamId.AccountId);
         view.SetItemIdLowLocal(uint.MaxValue);
         view.SetItemIdHighLocal(_itemId++);
