@@ -18,6 +18,9 @@ public class WeaponCosmeticsEntity
     public ulong SteamId { get; set; }
 
     [SugarColumn(IsNullable = false)]
+    public int Team { get; set; }
+    
+    [SugarColumn(IsNullable = false)]
     public int ItemId { get; set; }
 
     [SugarColumn(IsNullable = false)]
